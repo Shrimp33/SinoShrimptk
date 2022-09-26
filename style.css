@@ -1,0 +1,35 @@
+#conspan {
+    background-color: rgb(69, 69, 69);
+    border: #ffffff 2px solid;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    align-self: left;
+    width: 50%;
+}
+#textEntry {
+    font-family: "Arial";
+    font-size: 20px;
+    color: #ffffff;
+}
+body {
+    background-color: rgb(69, 69, 69);
+}
+#push  {
+    align-self: right;
+    width: auto;
+}
+#pushButton {
+    background-color: rgb(69, 69, 69);
+    border: #ffffff 2px solid;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    font-family: "Arial";
+    font-size: 20px;
+    color: #ffffff;
+}
+#pushButton:hover {
+    background-color: #ffffff;
+    color: rgb(80, 80, 80);
+}
