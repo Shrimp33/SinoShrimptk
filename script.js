@@ -1,3 +1,6 @@
+var bulk = false;
+
+
 async function pyatts() {
     // Main function
     var span = document.getElementById('textEntry');
@@ -31,21 +34,84 @@ async function pyatts() {
     // Phrase
     // Format the output
     var out = format(input, save);
-    // Console.log the output
-
-    // Set text to output
-    span.innerText = out;
-    // Unlock the input
-    span.contentEditable = true;
+    // Divs
+    // Replace all occurrences of newline with </div>
+    out = out.replace(/\n/g, '</div><br><div style= "display: inline-block">');
+    // Find all occurrences of %py() and replace with the <p class="pingying">content</p>
+    out = out.replace(/%py\((.*?)\)/g, '<p class="pingying" style="display: inline;">$1</p>');
+    // Find all occurrences of %or() and replace with the <p class="original">content</p>
+    out = out.replace(/%or\((.*?)\)/g, '<p class="original" style="display: inline;">$1</p>');
+    // Add div to the start
+    out = '<div style= "display: inline-block;">' + out + '</div>';
+    // Output
+    span.innerHTML = out;
+    // // Testing
+    // let speech = new SpeechSynthesisUtterance();
+    // // Mandarin
+    // speech.lang = 'zh-CN';
+    // // Set the text
+    // speech.text = input;
+    // // Speak
+    // window.speechSynthesis.speak(speech);
+    // Get an array of all the original elements
+    var original = document.getElementsByClassName('original');
+    // Iterate through all of the original elements
+    for (var i = 0; i < original.length; i++) {
+        // Add event listeners
+        // On mouse click
+        original[i].addEventListener('click', function() {
+            // If bulk
+            if (bulk) {
+                // Get div parent
+                var parent = this.parentNode;
+                // Get all original elements
+                var originals = parent.getElementsByClassName('original');
+                // Concatenate all of the original elements into a string
+                var text = '';
+                for (var j = 0; j < originals.length; j++) {
+                    // Also make them red
+                    originals[j].style.color = 'red';
+                    text += originals[j].innerText;
+                }
+                // Speak
+                let speech = new SpeechSynthesisUtterance();
+                // Mandarin
+                speech.lang = 'zh-CN';
+                // Set the text
+                speech.text = text;
+                // Speak
+                window.speechSynthesis.speak(speech);
+                // Turn them back to #fffb00
+                // wait for 1 second
+                setTimeout(function() {
+                for (var j = 0; j < originals.length; j++) {
+                    originals[j].style.color = '#fffb00';
+                    // log color
+                    console.log(originals[j].style.color);
+                }
+                }, 1000);
+            } else {
+                // Read text
+                let speech = new SpeechSynthesisUtterance();
+                // self
+                var self = this;
+                // Mandarin
+                speech.lang = 'zh-CN';
+                // Set the text
+                speech.text = self.innerText;
+                // Turn it red
+                self.style.color = 'red';
+                // Speak
+                window.speechSynthesis.speak(speech);
+                // Turn it back to #fffb00
+                // wait for .5 second
+                setTimeout(function() {
+                    self.style.color = '#fffb00';
+                }, 500);
+            }
+        });
+    }
     
-    // Testing
-    let speech = new SpeechSynthesisUtterance();
-    // Mandarin
-    speech.lang = 'zh-CN';
-    // Set the text
-    speech.text = input;
-    // Speak
-    window.speechSynthesis.speak(speech);
 }
 function format(a, b) {
     // Master output
@@ -57,7 +123,7 @@ function format(a, b) {
         // If a is a chinese character
         if (a[i].match(/[\u4e00-\u9fa5]/)) {
             bi = phasepy(b, bi) + 1; // Update index after value is spent
-            out += a[i] + "(" + b[bi - 1] + ")"; // Add the character and the pinyin
+            out += "%or(" + a[i] + ")" + "%py(" + b[bi - 1] + ")"; // Add the character and the pinyin
         }
         else {
             out += a[i]; // Add the character
@@ -79,7 +145,7 @@ function phasepy(b, i) {
     // Iterate through all of c
     for (var j = 0; j < c.length; j++) {
         // If c is not in extended latin
-        if (!c[j].match(/[\u0000-\u00ff]/) || c[j].match(/[\u0020-\u003E]/)) {
+        if (!c[j].match(/[\u0000-\u00ff]/) || c[j].match(/[\u0020-\u003E]/)) {  // Works for most cases but not all
             // Recurse
             return phasepy(b, i + 1);
         }
@@ -99,4 +165,7 @@ function unicodetochar(a) {
     a = a.replace(/\\u/g, '\\x');
     // Return the output
     return a;
+}
+function toggle(){
+    bulk = !bulk;
 }

@@ -12,6 +12,16 @@
     font-size: 20px;
     color: #ffffff;
 }
+.pingying {
+    font-family: "Arial";
+    font-size: 20px;
+    color: #ddaf17;
+}
+.original {
+    font-family: "Arial";
+    font-size: 20px;
+    color: #fffb00;
+}
 body {
     background-color: rgb(69, 69, 69);
 }
@@ -19,7 +29,7 @@ body {
     align-self: right;
     width: auto;
 }
-#pushButton {
+#pushButton, #toggleButton {
     background-color: rgb(69, 69, 69);
     border: #ffffff 2px solid;
     border-radius: 10px;
@@ -29,7 +39,7 @@ body {
     font-size: 20px;
     color: #ffffff;
 }
-#pushButton:hover {
+#pushButton:hover, #toggleButton:hover {
     background-color: #ffffff;
     color: rgb(80, 80, 80);
 }
