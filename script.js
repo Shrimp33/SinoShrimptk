@@ -2,9 +2,16 @@ async function pyatts() {
     // Main function
     var span = document.getElementById('textEntry');
     var input = span.innerText;
-    // Remove whitespace
-    input = input.replace(/\s/g, '');
+    // Replace new lines with u-newlines
+    input = input.replace(/\n/g, 'u-newline');
+    // Replace spaces with u-spaces
+    input = input.replace(/\s/g, 'u-space');
+    // Replace tabs with u-tabs
+    input = input.replace(/\t/g, 'u-tab');
+    // log input
     console.log(input);
+    // Remove all whitespace
+    input = input.replace(/\s/g, '');
     // Lock the input
     span.contentEditable = false;
     // Send to server
@@ -22,11 +29,9 @@ async function pyatts() {
     // Save
     var save = out['response'];
     // Phrase
-    console.log(save);
     // Format the output
     var out = format(input, save);
     // Console.log the output
-    console.log(out);
 
     // Set text to output
     span.innerText = out;
@@ -43,34 +48,43 @@ async function pyatts() {
     window.speechSynthesis.speak(speech);
 }
 function format(a, b) {
-    // Interate characters of a
+    // Master output
     var out = '';
+    // Counter vars
     var bi = 0;
-    // Special case for first character
-    // If is numb or letter
-    if (a[0].match(/[a-z0-9]/i)) {
-        out += a[0];
-    } else {
-        out += a[0];
-        out += b[0];
-        bi += 1;
-    }
+    // Iterate through all of a
     for (var i = 0; i < a.length; i++) {
-        // Get the character
-        var char = a.charAt(i + 1);
-        // if the character is not a alphabet or number
-        if (!char.match(/[a-z0-9]/i)) {
-            // Add the character to the output
-            out += "(" + b[bi] + ")";
-            out += char;
-            // Add b index
-            bi += 1;
-        } else {
-            // Add the character to the output
-            out += char;
+        // If a is a chinese character
+        if (a[i].match(/[\u4e00-\u9fa5]/)) {
+            bi = phasepy(b, bi) + 1; // Update index after value is spent
+            out += a[i] + "(" + b[bi - 1] + ")"; // Add the character and the pinyin
+        }
+        else {
+            out += a[i]; // Add the character
         }
     }
+    // Where there is u-newline, replace with newline
+    out = out.replace(/u-newline/g, '\n');
+    // Where there is u-space, replace with space
+    out = out.replace(/u-space/g, ' ');
+    // Where there is u-tab, replace with tab
+    out = out.replace(/u-tab/g, '\t');
+
+    // Return the output
     return out;
+}
+function phasepy(b, i) {
+    // Get b at i
+    var c = b[i];
+    // Iterate through all of c
+    for (var j = 0; j < c.length; j++) {
+        // If c is not in extended latin
+        if (!c[j].match(/[\u0000-\u00ff]/) || c[j].match(/[\u0020-\u003E]/)) {
+            // Recurse
+            return phasepy(b, i + 1);
+        }
+    }
+    return i;
 }
 function urlsafe_base64_encode(a) {
     // Encode the input
