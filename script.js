@@ -110,8 +110,34 @@ async function pyatts() {
                 }, 500);
             }
         });
+        // On copy and paste
+        original[i].addEventListener('copy', function() {
+            // Get selection
+            var selection = getSelectionTextAndContainerElement();
+            // Get the text
+            var text = selection.text;
+            // Remove non-chinese characters
+            text = text.replace(/[\u0000-\u4dff]/g, '');
+            // Set clipboard data
+            navigator.clipboard.writeText(text);
+        });
     }
-    
+    // Intreate through all of the pingying elements
+    var pingying = document.getElementsByClassName('pingying');
+    for (var i = 0; i < pingying.length; i++) {
+        // Add event listeners
+        // Copy and paste
+        pingying[i].addEventListener('copy', function() {
+            // Get selection
+            var selection = getSelectionTextAndContainerElement();
+            // Get the text
+            var text = selection.text;
+            // Remove non-chinese characters
+            text = text.replace(/[\u4e00-\u9fa5]/g, '');
+            // Set clipboard data
+            navigator.clipboard.writeText(text);
+        });
+    }
 }
 function format(a, b) {
     // Master output
