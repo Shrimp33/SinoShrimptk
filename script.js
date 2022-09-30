@@ -1,5 +1,7 @@
 var bulk = false;
-
+// Codes of legal of ā,ē,ī,ō,ū,ǖ,á,é,í,ó,ú,ǘ,ǎ,ě,ǐ,ǒ,ǔ,ǚ,à,è,ì,ò,ù,ǜ
+const legals = [257, 275, 299, 333, 363, 470, 225, 233, 237, 243, 250, 472, 462, 283, 464, 466, 468, 474, 224, 232, 236, 242, 249, 476]
+console.log(legals);
 
 async function pyatts() {
     // Main function
@@ -12,7 +14,7 @@ async function pyatts() {
     // Replace tabs with u-tabs
     input = input.replace(/\t/g, 'u-tab');
     // log input
-    console.log(input);
+    // console.log(input);
     // Remove all whitespace
     input = input.replace(/\s/g, '');
     // Lock the input
@@ -87,7 +89,7 @@ async function pyatts() {
                 for (var j = 0; j < originals.length; j++) {
                     originals[j].style.color = '#fffb00';
                     // log color
-                    console.log(originals[j].style.color);
+                    // console.log(originals[j].style.color);
                 }
                 }, 1000);
             } else {
@@ -148,6 +150,7 @@ function format(a, b) {
     for (var i = 0; i < a.length; i++) {
         // If a is a chinese character
         if (a[i].match(/[\u4e00-\u9fa5]/)) {
+            // console.log(b);
             bi = phasepy(b, bi) + 1; // Update index after value is spent
             out += "%or(" + a[i] + ")" + "%py(" + b[bi - 1] + ")"; // Add the character and the pinyin
         }
@@ -166,15 +169,18 @@ function format(a, b) {
     return out;
 }
 function phasepy(b, i) {
-    // Get b at i
-    var c = b[i];
-    // Iterate through all of c
-    for (var j = 0; j < c.length; j++) {
-        // If c is not in extended latin
-        if (!legalcharacter(c[j])) {  // Works for most cases but not all
-            // Recurse
-            return phasepy(b, i + 1);
+    // If i is not the last index
+    if (i < b.length - 1) {
+        var c = b[i][0]; // Get val
+        // Iterate through all of c
+        for (var j = 0; j < c.length; j++) {
+            // If c is not in extended latin
+            if (!legalcharacter(c[j])) {  // Works for most cases but not all
+                // Recurse
+                return phasepy(b, i + 1);
+            }
         }
+        return i;
     }
     return i;
 }
@@ -196,19 +202,18 @@ function toggle(){
     bulk = !bulk;
 }
 function legalcharacter(c) {  // Takes a character c and returns true if is legal pingyin
-    // If c is [A-Za-z]
-    if (c.match(/[A-Za-z]/)) {  // Normal letters
+    // If c is in A-Za-z then return true
+    if (c.match(/[A-Za-z]/)) {
         return true;
     }
-    // aeiou that have a diacritic
-    else if (c.match(/[\u00E0-\u00FC]/)) {  // Diacritics
+    // Get the unicode of the character in hex
+    var hex = c.charCodeAt(0)
+    // If hex is in legal hex then return true
+    if (legals.includes(hex)) {
         return true;
     }
-    // AEIOU that have a diacritic
-    else if (c.match(/[\u00C0-\u00DC]/)) {  // Diacritics
-        return true;
-    }
-    else {
-        return false;
-    }
+    // Return false
+    console.log(c);
+    console.log(hex);
+    return false;
 }
