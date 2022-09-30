@@ -145,7 +145,7 @@ function phasepy(b, i) {
     // Iterate through all of c
     for (var j = 0; j < c.length; j++) {
         // If c is not in extended latin
-        if (!c[j].match(/[\u0000-\u00ff]/) || c[j].match(/[\u0020-\u003E]/)) {  // Works for most cases but not all
+        if (!legalcharacter(c[j])) {  // Works for most cases but not all
             // Recurse
             return phasepy(b, i + 1);
         }
@@ -168,4 +168,21 @@ function unicodetochar(a) {
 }
 function toggle(){
     bulk = !bulk;
+}
+function legalcharacter(c) {  // Takes a character c and returns true if is legal pingyin
+    // If c is [A-Za-z]
+    if (c.match(/[A-Za-z]/)) {  // Normal letters
+        return true;
+    }
+    // aeiou that have a diacritic
+    else if (c.match(/[\u00E0-\u00FC]/)) {  // Diacritics
+        return true;
+    }
+    // AEIOU that have a diacritic
+    else if (c.match(/[\u00C0-\u00DC]/)) {  // Diacritics
+        return true;
+    }
+    else {
+        return false;
+    }
 }
