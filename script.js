@@ -1,11 +1,25 @@
 var bulk = false;
 // Codes of legal of ā,ē,ī,ō,ū,ǖ,á,é,í,ó,ú,ǘ,ǎ,ě,ǐ,ǒ,ǔ,ǚ,à,è,ì,ò,ù,ǜ
 const legals = [257, 275, 299, 333, 363, 470, 225, 233, 237, 243, 250, 472, 462, 283, 464, 466, 468, 474, 224, 232, 236, 242, 249, 476]
-console.log(legals);
+// console.log(legals);
+
+function cache(data, key) {
+    // Cache the data
+    localStorage.setItem(key, data);
+}
+function read(key) {
+    // Read the data
+    return localStorage.getItem(key);
+}
 
 async function pyatts() {
     // Main function
     var span = document.getElementById('textEntry');
+    // Easy case
+    if (read("iliteration") != null) {
+        span.innerHTML = read("iliteration");
+        return;
+    }
     var input = span.innerText;
     // Replace new lines with u-newlines
     input = input.replace(/\n/g, 'u-newline');
@@ -47,6 +61,8 @@ async function pyatts() {
     out = '<div style= "display: inline-block;">' + out + '</div>';
     // Output
     span.innerHTML = out;
+    // Cache
+    cache(out, "iliteration");
     // // Testing
     // let speech = new SpeechSynthesisUtterance();
     // // Mandarin
@@ -212,8 +228,12 @@ function legalcharacter(c) {  // Takes a character c and returns true if is lega
     if (legals.includes(hex)) {
         return true;
     }
-    // Return false
-    console.log(c);
-    console.log(hex);
     return false;
+}
+function clearText(){
+    // Clear text in box and allow for new input
+    let handle = document.getElementById('textEntry');
+    handle.value = '';
+    handle.contentEditable = true;
+    cache(null, "iliteration");
 }
