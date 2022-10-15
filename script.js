@@ -14,64 +14,66 @@ function read(key) {
 
 async function pyatts() {
     // Main function
-    var span = document.getElementById('textEntry');
+    let span = document.getElementById('textEntry');
     // Easy case
-    if (read("iliteration") != null) {
+    if (read("iliteration") != null && span.textContent == ' Place Input Here') {
         span.innerHTML = read("iliteration");
-        return;
+        span.contentEditable = false;
     }
-    var input = span.innerText;
-    // Replace new lines with u-newlines
-    input = input.replace(/\n/g, 'u-newline');
-    // Replace spaces with u-spaces
-    input = input.replace(/\s/g, 'u-space');
-    // Replace tabs with u-tabs
-    input = input.replace(/\t/g, 'u-tab');
-    // log input
-    // console.log(input);
-    // Remove all whitespace
-    input = input.replace(/\s/g, '');
-    // Lock the input
-    span.contentEditable = false;
-    // Send to server
-    var json;
-    safe = urlsafe_base64_encode(input);
-    await fetch('https://PingYingServer.shrimp33.repl.co/pingying/' + safe, {  // Please don't ddos me
-    method: 'GET',
-    }).then(response => response.text()).then(data => {
-        json = data;
-    });
-    // Convert the output
-    var out = JSON.parse(json);
-    // Console.log the output
-    // console.log(out['response']);
-    // Save
-    var save = out['response'];
-    // Phrase
-    // Format the output
-    var out = format(input, save);
-    // Divs
-    // Replace all occurrences of newline with </div>
-    out = out.replace(/\n/g, '</div><br><div style= "display: inline-block">');
-    // Find all occurrences of %py() and replace with the <p class="pingying">content</p>
-    out = out.replace(/%py\((.*?)\)/g, '<p class="pingying" style="display: inline;">$1</p>');
-    // Find all occurrences of %or() and replace with the <p class="original">content</p>
-    out = out.replace(/%or\((.*?)\)/g, '<p class="original" style="display: inline;">$1</p>');
-    // Add div to the start
-    out = '<div style= "display: inline-block;">' + out + '</div>';
-    // Output
-    span.innerHTML = out;
-    // Cache
-    cache(out, "iliteration");
-    // // Testing
-    // let speech = new SpeechSynthesisUtterance();
-    // // Mandarin
-    // speech.lang = 'zh-CN';
-    // // Set the text
-    // speech.text = input;
-    // // Speak
-    // window.speechSynthesis.speak(speech);
-    // Get an array of all the original elements
+    else // Hard case
+    {    let input = span.innerText;
+        // Replace new lines with u-newlines
+        input = input.replace(/\n/g, 'u-newline');
+        // Replace spaces with u-spaces
+        input = input.replace(/\s/g, 'u-space');
+        // Replace tabs with u-tabs
+        input = input.replace(/\t/g, 'u-tab');
+        // log input
+        // console.log(input);
+        // Remove all whitespace
+        input = input.replace(/\s/g, '');
+        // Lock the input
+        span.contentEditable = false;
+        // Send to server
+        var json;
+        safe = urlsafe_base64_encode(input);
+        await fetch('https://PingYingServer.shrimp33.repl.co/pingying/' + safe, {  // Please don't ddos me
+        method: 'GET',
+        }).then(response => response.text()).then(data => {
+            json = data;
+        });
+        // Convert the output
+        var out = JSON.parse(json);
+        // Console.log the output
+        // console.log(out['response']);
+        // Save
+        var save = out['response'];
+        // Phrase
+        // Format the output
+        var out = format(input, save);
+        // Divs
+        // Replace all occurrences of newline with </div>
+        out = out.replace(/\n/g, '</div><br><div style= "display: inline-block">');
+        // Find all occurrences of %py() and replace with the <p class="pingying">content</p>
+        out = out.replace(/%py\((.*?)\)/g, '<p class="pingying" style="display: inline;">$1</p>');
+        // Find all occurrences of %or() and replace with the <p class="original">content</p>
+        out = out.replace(/%or\((.*?)\)/g, '<p class="original" style="display: inline;">$1</p>');
+        // Add div to the start
+        out = '<div style= "display: inline-block;">' + out + '</div>';
+        // Output
+        span.innerHTML = out;
+        // Cache
+        cache(out, "iliteration");
+        // // Testing
+        // let speech = new SpeechSynthesisUtterance();
+        // // Mandarin
+        // speech.lang = 'zh-CN';
+        // // Set the text
+        // speech.text = input;
+        // // Speak
+        // window.speechSynthesis.speak(speech);
+        // Get an array of all the original elements
+    }
     var original = document.getElementsByClassName('original');
     // Iterate through all of the original elements
     for (var i = 0; i < original.length; i++) {
@@ -233,7 +235,8 @@ function legalcharacter(c) {  // Takes a character c and returns true if is lega
 function clearText(){
     // Clear text in box and allow for new input
     let handle = document.getElementById('textEntry');
-    handle.value = '';
+    handle.textContent = ' Place Input Here';
     handle.contentEditable = true;
-    cache(null, "iliteration");
+    // Delete cache
+    localStorage.removeItem('iliteration');
 }
